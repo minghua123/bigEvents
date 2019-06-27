@@ -29,7 +29,6 @@
                 <input type="submit" class="input_sub" id="btn_login" value="登 录">
             </form>
         </div>
-
     </div>
     <!-- 模态框 -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -59,42 +58,38 @@
              如果为空不要继续, 如果不为空就继续
          4.发送ajax请求, 判断账号密码是否正确 */
         // 给登录一个点击事件.登录按钮是一个form表单中的submit, 所以要去掉他的默认跳转.
-        $(function () {
-            $('#btn_login').on('click', function (e) {
-                e.preventDefault();
-                var userName = $('.input_txt').val().trim();
-                var password = $('.input_pass').val().trim();
-                if (userName == '' || password == '') {
-                    // alert('您的用户名或者密码为空!');
-                    $('.modal-body').text('您的用户名或者密码为空!');
-                    $('#myModal').modal({
-                        keyboard: true
-                    });
-                    return;
-                };
-                $.ajax({
-                    type: 'post',
-                    url: 'http://localhost:8000/admin/login',
-                    data: {
-                        user_name: userName,
-                        password: password
-                    },
-                    success: function (backData) {
-                        console.log(backData);
-                        if (backData.code == 200) {
-                            window.location.href = "./index.html";
-                        } else {
-                            // alert('您的用户名或者密码错误');
-                            $('.modal-body').text('您的用户名或者密码错误');
-                            $('#myModal').modal({
-                                keyboard: true
-                            });
-                        }
-                    }
+        $("#btn_login").on('click', function (e) {
+            e.preventDefault();
+            var username = $(".input_txt").val().trim();
+            var password = $(".input_pass").val().trim();
+            if (username == '' || password == '') {
+                $('#myModal').modal({
+                    keyboard: true
                 });
-            });
-
+                $('.modal-body').text('您输入的用户名或者密码为空');
+                return;
+            }
+            $.ajax({
+                type: 'post',
+                url: 'http://localhost:8000/admin/login',
+                data: {
+                    user_name: username,
+                    password: password
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        window.location.href = "./index.html";
+                    } else {
+                        $('#myModal').modal({
+                            keyboard: true
+                        });
+                        $('.modal-body').text('您输入的用户名或者密码错误');
+                    }
+                }
+            })
         });
+      
     </script>
 </body>
 
