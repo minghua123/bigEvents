@@ -96,7 +96,7 @@
                         </div>
                         <div class="form-group">
                             <label for="message-text" class="control-label">分类别名:</label>
-                            <input type="text" class="form-control" id="recipient-name">
+                            <input type="text" class="form-control" id="cateslug">
                         </div>
                     </form>
                 </div>
@@ -120,7 +120,7 @@
         });
 
         $('#model_add').click(function () {
-            alert('add');
+            // alert('add');
             $('#addModal').modal('hide');
         });
 
@@ -144,21 +144,76 @@
                         <td>{{v.slug}}</td>
                         <td class="text-center">
                             <a href='javascript:editTr({"id":"2","slug":"funny","name":"奇趣事"});' class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 2 );" class="btn btn-danger btn-xs" data_id="{{v.id}}">删除</a>
+                            <a href="#" data-id = "{{v.id}}" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
         {{/each}}
     </script>
     <script>
+
+        // 将获取页面文章分类信息封装成函数
+        function getCateData() {
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/category_search',
+                success: function (backData) {
+                    console.log(backData);
+                    var resHtml = template('tmp_category', backData);
+                    $('tbody').html(resHtml);
+                }
+            });
+        };
         // 1.一进到文章分类页面, 发送ajax请求, 获取所有的文章分类信息.
-        $.ajax({
-            type: 'get',
-            url: 'http://localhost:8000/admin/category_search',
-            success: function (backData) {
-                console.log(backData);
-                var resHtml = template('tmp_category',backData);
-                $('tbody').html(resHtml);
-            }
+        getCateData();
+
+        // 分类新增
+        // 1.给新增按钮设置一个点击事件
+        // 2.获取用户输入的类别名称和别名
+        // 3.发送ajax请求
+        // 4.新增成功后,再重新获取一次文章类别
+        $('#model_add').on('click', function (e) {
+            e.preventDefault();
+            var catename = $('#recipient-name').val();
+            var cateslug = $('#cateslug').val();
+            $.ajax({
+                type: 'post',
+                url: 'http://localhost:8000/admin/category_add',
+                data: {
+                    name: catename,
+                    slug: cateslug,
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        getCateData();
+                    }
+                }
+            });
+            $('#model_add').modal('hide');
+        });
+
+        // 删除文章
+        // 点击删除按钮
+        $('tbody').on('click', '.btn-danger', function () {
+            var that = $(this);
+            if (confirm('您确定要删除嘛?')) {
+                var id = $(this).attr('data-id');
+                console.log(id);
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/category_delete',
+                    data: {
+                        id:id
+                    },
+                    success: function(backData){
+                        console.log(backData);
+                        if(backData.code == 200) {
+                            // getCateData();
+                            that.parent().parent().remove();
+                        }
+                    }
+                });
+            };
         });
     </script>
 
