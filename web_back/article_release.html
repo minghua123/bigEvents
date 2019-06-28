@@ -33,6 +33,7 @@
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
+                        <img src="" alt="" style="height: 150px;">
                         <input type="file" id="exampleInputFile">
                     </div>
                 </div>
@@ -79,7 +80,37 @@
             </form>
         </div>
     </div>
+    <script src="./js/template-web.js"></script>
+    <script id="cate-article" type="text/html">
+        {{each data v}}
+        <option value="{{v.id}}">{{v.name}}</option>
+        {{/each}}
+    </script>
+    <script>
+        
+        $(function(){
+            // 图片预览
+            $('#exampleInputFile').on('change',function(){
+                var icon = this.files[0];
+                var url = URL.createObjectURL(icon);
+                $(this).prev().attr('src',url);
+            });
 
+            // 一进来文章发表页面就发送ajax请求,获取文章所有数据
+           
+                $.ajax({
+                    url: 'http://localhost:8000/admin/category_search',
+                    success: function(backData) {
+                        console.log(backData);
+                        if(backData.code == 200) {
+                            var resHtml = template('cate-article',backData);
+                            $('.form-control').html(resHtml);
+                        }
+                    }
+                })
+            });
+        
+    </script>
 </body>
 
 </html>
