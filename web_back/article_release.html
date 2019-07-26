@@ -15,6 +15,7 @@
     <script src="js/jedate/js/jedate.js"></script>
     <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <script src="./js/moment.js"></script>
 </head>
 
 <body>
@@ -27,20 +28,20 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="文章标题">
+                        <input type="email" class="form-control" id="inputEmail3" name="title" placeholder="文章标题">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
                         <img src="" alt="" style="height: 150px;">
-                        <input type="file" id="exampleInputFile">
+                        <input type="file" id="exampleInputFile" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
+                        <select class="form-control" name="type">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -52,9 +53,8 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">发布时间：</label>
                     <div class="col-sm-4">
-
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="dateinput">
+                            <input type="text" class="form-control" name="date" placeholder="YYYY-MM-DD" id="dateinput">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -66,14 +66,14 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="rich_content" name="content" placeholder="文章内容">
+                        <textarea class="form-control" id="rich_content" placeholder="文章内容">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda fugiat illo nihil molestias ab. Laborum eius non atque, totam sapiente quae obcaecati assumenda ratione inventore pariatur maiores, qui libero delectus.
                             </textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">发布</button>
+                        <button type="submit" class="btn btn-success btn-release">发布</button>
                         <button type="submit" class="btn btn-default">存为草稿</button>
                     </div>
                 </div>
@@ -87,29 +87,60 @@
         {{/each}}
     </script>
     <script>
-        
-        $(function(){
+
+        $(function () {
             // 图片预览
-            $('#exampleInputFile').on('change',function(){
+            $('#exampleInputFile').on('change', function () {
                 var icon = this.files[0];
                 var url = URL.createObjectURL(icon);
-                $(this).prev().attr('src',url);
+                $(this).prev().attr('src', url);
             });
 
             // 一进来文章发表页面就发送ajax请求,获取文章所有数据
-           
-                $.ajax({
-                    url: 'http://localhost:8000/admin/category_search',
-                    success: function(backData) {
-                        console.log(backData);
-                        if(backData.code == 200) {
-                            var resHtml = template('cate-article',backData);
-                            $('.form-control').html(resHtml);
-                        }
+
+            $.ajax({
+                url: 'http://localhost:8000/admin/category_search',
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('cate-article', backData);
+                        $('.form-control').html(resHtml);
                     }
-                })
-            });
-        
+                }
+            })
+        });
+        // 一进到发表文章页面,就用moment.js显示当前的系统时间
+        var dateNowStr = moment().format('YYYY-MM-DD');     //当前时间格式化
+        $('#dateinput').val(dateNowStr);
+
+      /*   给发布按钮一个点击事件,
+        注意阻止默认跳转
+        获取formData数据
+        检查form表单里面需要发送数据的标签是否都带有name属性.
+        富文本编辑器里面的内容获取不到, 追加到formData里面去.文本域有name要去掉name.
+        发送ajax请求 */
+
+        // 给发布按钮一个点击事件,注意阻止默认跳转
+        $('.btn-release').on('click',function(e){
+            e.preventDefault();
+            var formData1 = new FormData($('form')[0]);
+            formData1.append('content',tinyMCE.activeEditor.getContent());
+            console.log(formData1.get('cover'));
+            $.ajax({
+                type: 'post',
+                url: 'http://localhost:8000/admin/article_publish',
+                data: formData1,
+                contentType: false,
+                processData: false,
+                success: function(backData) {
+                    console.log(backData);
+                    if(backData.code == 201) {
+                        alert('您的文章发布成功!');
+                        window.location.href="./article_list.html";
+                    }
+                }
+            })
+        });
     </script>
 </body>
 

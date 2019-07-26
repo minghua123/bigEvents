@@ -15,35 +15,36 @@
     <script src="js/jedate/js/jedate.js"></script>
     <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <script src='./js/template-web.js'></script>
 </head>
 
 <body>
-    <div class="container-fluid">
+    <form class="container-fluid">
         <div class="common_title">
             文章编辑
         </div>
-        <div class="container-fluid common_con">
+        <form class="container-fluid common_con">
             <form class="form-horizontal article_form">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" value="文章标题文字">
+                        <input type="text" class="form-control title" id="inputEmail3" value="文章标题文字" name="title">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
                         <img src="images/pic06.jpg" class="article_cover">
-                        <input type="file" id="exampleInputFile">
+                        <input type="file" id="exampleInputFile" class="cover" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>类别一</option>
-                            <option>类别二</option>
+                        <select class="form-control type" name="type">
                             <option>类别三</option>
+                            <option value="8">军事</option>
+                            <option value='1'>科学</option>
                             <option selected>类别四</option>
                             <option>类别五</option>
                         </select>
@@ -54,7 +55,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" value="2019-05-17" id="dateinput">
+                            <input type="text" class="form-control date" value="2019-05-17" id="dateinput" name="date">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -66,18 +67,78 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="rich_content" name="content" placeholder="文章内容" value="文章内容">
+                        <input type="text" class="form-control content" id="rich_content"
+                            placeholder="文章内容" value="文章内容">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <button type="submit" class="btn btn-success btn-modify">修改</button>
                     </div>
                 </div>
             </form>
+        </form>
         </div>
-    </div>
-
+        <script id="tmp-edit" type="text/html">
+        {{each data v}}
+        <option value="{{v.id}}">{{v.name}}</option>
+        {{/each}}
+    </script>
+        <script>
+            /*  一进到文章编辑页面, 就要加载所有的文章类别
+             发送ajax请求, 获取数据, 通过模板引擎渲染 */
+            var id = window.location.search.split('=')[1];
+            console.log(id);
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/category_search',
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('tmp-edit', backData);
+                        $('select.form-cate').html(resHtml);
+                    }
+                }
+            });
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/search',
+                data: {
+                    id: id
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        $('input.title').val(backData.data.title);
+                        $('.article_cover').attr('src', backData.data.cover);
+                        console.log(backData.data.type);
+                        // $('select.type').val(backData.data.type);
+                        $('input.date').val(backData.data.date);
+                        $('input.content').val(backData.data.content);
+                    }
+                }
+            })
+    //   给修改按钮设置点击事件
+            $('.btn-modify').on('click',function(e){
+                e.preventDefault();
+                var formDate1 = new FormData($('form')[0]);
+                formDate1.append('id',id);
+                formDate1.append('content',tinyMCE.activeEditor.getContent());
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/article_edit',
+                    data: formDate1,
+                    contentType: false,
+                    processData:false,
+                    success: function(backData) {
+                        console.log(backData);
+                        if(backData.code == 200) {
+                            alert("修改成功!");
+                        }
+                    }
+                });
+            }); 
+        </script>
 </body>
 
 </html>

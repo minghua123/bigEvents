@@ -68,7 +68,7 @@
 
 
                         <td class="text-center">已发布</td>
-
+ 
 
                         <td class="text-center">
                             <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
@@ -94,160 +94,94 @@
                             <a href="javascript:deleteTr( 1004 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>近难领管年算</td>
                         <td>杰克</td>
                         <td>会生活</td>
                         <td class="text-center">2017-05-27 16:49:04</td>
-
-
                         <td class="text-center">已发布</td>
-
-
                         <td class="text-center">
                             <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 1003 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>龙大实究</td>
                         <td>杰克</td>
                         <td>未分类</td>
                         <td class="text-center">2017-04-13 10:43:41</td>
-
-
                         <td class="text-center">草稿</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=1002" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 1002 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>算性得走来拉</td>
                         <td>肉丝</td>
                         <td>奇趣事</td>
                         <td class="text-center">2017-04-06 04:58:12</td>
-
-
                         <td class="text-center">已发布</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=1001" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 1001 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>几平会出气</td>
                         <td>管理员</td>
                         <td>奇趣事</td>
                         <td class="text-center">2017-04-03 20:16:34</td>
-
-
                         <td class="text-center">草稿</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=1000" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 1000 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>世团先证型角</td>
                         <td>杰克</td>
                         <td>奇趣事</td>
                         <td class="text-center">2017-04-03 14:40:08</td>
-
-
                         <td class="text-center">已发布</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=999" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 999 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>构更反步五</td>
                         <td>肉丝</td>
                         <td>奇趣事</td>
                         <td class="text-center">2017-03-30 22:31:52</td>
-
-
                         <td class="text-center">已发布</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=998" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 998 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>组方些</td>
                         <td>肉丝</td>
                         <td>会生活</td>
                         <td class="text-center">2017-02-08 05:38:43</td>
-
-
                         <td class="text-center">草稿</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=996" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 996 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
-
                     <tr>
-
                         <td>日做发光成</td>
                         <td>管理员</td>
                         <td>爱旅行</td>
                         <td class="text-center">2017-01-26 22:19:59</td>
-
-
                         <td class="text-center">草稿</td>
-
-
                         <td class="text-center">
                             <a href="post-edit.html?id=995" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:deleteTr( 995 );" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
-
-
                 </tbody>
             </table>
 
@@ -283,11 +217,11 @@
             <td>{{v.title}}</td>
             <td>{{v.author}}</td>
             <td>{{v.type}}</td>
-            <td class="text-center">{{v.date}}}</td>
+            <td class="text-center">{{v.date}}</td>
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
-                <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
-                <a href="javascript:deleteTr( 1005 );" class="btn btn-danger btn-xs">删除</a>
+                <a href="./article_edit.html?id={{v.id}}" class="btn btn-default btn-xs">编辑</a>
+                <a href="#" data-id="{{v.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{/each}}
@@ -335,11 +269,11 @@
                     if (backData.code == 200) {
                         var resHtml2 = template('tmp_list', backData);
                         $('tbody').html(resHtml2);
+                        window.currentPage = $pagination.twbsPagination('getCurrentPage');
                         var totalPages = backData.totalPage;
                         console.log(totalPages);
                         if (myTotalPage != totalPages) {
                             myTotalPage = totalPages;
-                            var currentPage = $pagination.twbsPagination('getCurrentPage');
                             $pagination.twbsPagination('destroy');
                             $pagination.twbsPagination($.extend({}, defaultOpts, {
                                 startPage: 1,
@@ -377,6 +311,31 @@
             }
         };
         $pagination.twbsPagination(defaultOpts);
+
+        // 删除文章
+        /* 1.给删除按钮设置点击事件, 文章列表是动态生成的, 所以要委托注册.
+        2.在删除按钮上设置一个自定义属性data - id用来保存当前这篇文章的id.
+        3.发送ajax请求删除.
+        删除成功后要重新的渲染一次数据 */
+        $('tbody').on('click', '.btn-delete', function () {
+            console.log(1111);
+            var id = $(this).attr('data-id');
+            console.log(id);
+            if (confirm('你确定要删除这篇文章嘛?')) {
+                $.ajax({
+                    type: 'get',
+                    url: 'http://localhost:8000/admin/article_delete',
+                    data: {
+                        id: id
+                    },
+                    success: function (backData) {
+                        console.log(backData);
+                        getData(currentPage);
+                    }
+                });
+            };
+        });
     </script>
 </body>
+
 </html>
